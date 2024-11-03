@@ -13,6 +13,7 @@ export type StatusType = {
 	Effect: (model: Model) => void;
 	Completion: (model: Model) => void;
 	Stacks?: boolean;
+	MaxStacks?: number;
 	StatusAttributes?: string[];
 	Modifiers?: Map<string, string>;
 };
@@ -80,9 +81,15 @@ class SimpleStatusEffect {
 		// Add stack attribute
 		const stackKey = status.Name.lower() + "_" + STACK_KEY;
 		if (status.Stacks) {
+			if (!status.MaxStacks) error("Status is stackable but has no max stacks.");
 			const existingStacks = model.GetAttribute(stackKey) as number;
 			if (existingStacks) {
-				model.SetAttribute(stackKey, existingStacks + 1);
+				if (existingStacks < status.MaxStacks) {
+					model.SetAttribute(stackKey, existingStacks + 1);
+				} else {
+					warn("Max Stacks reach for: ", status.Name);
+					return;
+				}
 			} else {
 				model.SetAttribute(stackKey, 1);
 			}
