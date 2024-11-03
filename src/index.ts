@@ -87,7 +87,6 @@ class SimpleStatusEffect {
 				if (existingStacks < status.MaxStacks) {
 					model.SetAttribute(stackKey, existingStacks + 1);
 				} else {
-					warn("Max Stacks reach for: ", status.Name);
 					return;
 				}
 			} else {
